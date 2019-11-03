@@ -1,0 +1,68 @@
+---
+AWSTemplateFormatVersion: '2010-09-09'
+
+Parameters:
+  LambdaBucketName:
+    Type: String
+
+  LambdaTimeout:
+    Type: Number
+    Default: 300
+
+  LambdaS3KeyPath:
+    Type: String
+
+  SmsApiKey:
+    Type: String
+    NoEcho: true
+
+  SmsApiAddress:
+    Type: String
+
+Resources:
+  TpopLambda:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: TippingPointOpenPatch
+      Description: TippingPoint Open Patch
+      Handler: 'tpop.lambda_handler'
+      Code:
+        S3Bucket: !Ref LambdaBucketName
+        S3Key: !Ref LambdaS3KeyPath
+      Environment:
+        Variables:
+          SMS_KEY: !Ref SmsApiKey
+          SMS_API_ADDRESS: !Ref SmsApiAddress
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Timeout: !Ref LambdaTimeout
+      MemorySize: 192
+      Runtime: python3.7
+
+  LambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service:
+            - lambda.amazonaws.com
+          Action:
+          - sts:AssumeRole
+      Path: "/"
+      Policies:
+      - PolicyName: root
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+          - Effect: Allow
+            Action:
+            - logs:*
+            Resource: arn:aws:logs:*:*:*
+
+Outputs:
+  LambdaS3Location:
+    Value: !Sub '${LambdaBucketName}/${LambdaS3KeyPath}'
+    Export:
+      Name: !Sub '${AWS::StackName}-lambda-file-location'
