@@ -29,7 +29,9 @@ class Tp:
             self.headers = {'X-SMS-API-KEY': self.tp_api_key}
 
         except KeyError:
-            sys.exit('"SMS_KEY" and/or "SMS_API_ADDRESS" environment variables are not set. Please set them and try again.')
+            self.logger.entry('critical', 'Error: "SMS_KEY" and/or "SMS_API_ADDRESS" environment variables are not '
+                                          'set. Please set them and try again.')
+            sys.exit(1)
 
         self.logger.entry('info', f'Obtained DS address: {self.sms_address}')
 
@@ -165,19 +167,28 @@ class Tp:
 
             self.logger.entry('info', f'Status: {filter_status} - Filter: {filter_name}')
 
-    def set_filter_entries(self, filter_nums, action_set_option='Block + Notify'):
-        self.logger.entry('info', f'Enabling filters...')
+    def set_filter_entries(self, filter_nums, enable_filters=True, action_set_option='Block + Notify'):
+        filter_setting = 'Enabling' if enable_filters else 'Disabling'
+
+        self.logger.entry('info', f'{filter_setting} filters...')
 
         data = ET.Element('setFilters')
         name = ET.SubElement(data, 'profile')
 
         for filter_num in filter_nums:
             filter_section = ET.SubElement(data, 'filter')
-            number = ET.SubElement(filter_section, 'number')
-            action_set = ET.SubElement(filter_section, 'actionset')
             name.set('name', self.profile_name)
+
+            number = ET.SubElement(filter_section, 'number')
             number.text = str(filter_num)
-            action_set.set('name', action_set_option)
+
+            if enable_filters:
+                action_set = ET.SubElement(filter_section, 'actionset')
+                action_set.set('name', action_set_option)
+
+            else:
+                enabled = ET.SubElement(filter_section, 'enabled')
+                enabled.text = 'false'
 
         xml_data = ET.tostring(data)
 

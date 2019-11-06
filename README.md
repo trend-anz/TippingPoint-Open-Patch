@@ -5,6 +5,7 @@ TPOP enables third parties (Tenable, Rapid7, Qualys, ServiceNow, etc) to easily 
 1. Profile name
 2. Segment group name
 3. CVE of a vulnerability
+4. (Optional) Enable or disable filters
 
 TPOP will then do the following:
 
@@ -15,13 +16,14 @@ TPOP will then do the following:
 
 Provided parameters:
 
-* Profile name: Default
-* Segment name: Default
-* CVE: CVE-1999-0454
+* profile_name: Default
+* segment_group_name: Default
+* cve: CVE-1999-0454
+* enable_filters: true (optional: defaults to 'true')
 
 ### Run
 
-In this run, `Demo Policy` is created, the relevant IPS rules are applied to it and the host is assigned the newly created policy. 
+The relevant IPS filters are applied to the `Default` profile: 
 
 ```
 04-Nov-19 06:27:59 - INFO - Obtaining TP API key
@@ -65,7 +67,7 @@ In this run, `Demo Policy` is created, the relevant IPS rules are applied to it 
 ```
 
 ## Response Payloads
-### Successful Execution
+### Successful Enabled Execution
 
 When a known CVE is provided, the Lambda returns the following JSON payload:
 
@@ -73,6 +75,17 @@ When a known CVE is provided, the Lambda returns the following JSON payload:
 {
     "statusCode": 200, 
     "body": "\"Successfully added CVE-1999-0454 filter(s) to Default profile and distributed changes to Default segment group\""
+}
+```
+
+### Successful Disabled Execution
+
+When a known CVE is provided, the Lambda returns the following JSON payload:
+
+```
+{
+    "statusCode": 200, 
+    "body": "\"Successfully disabled CVE-1999-0454 filter(s) to Default profile and distributed changes to Default segment group\""
 }
 ```
 

@@ -22,7 +22,17 @@ class Op(Tp):
             msg = f'Profile name {self.profile_name} does not exist on SMS {self.sms_address}'
             self.logger.entry('critical', msg)
 
-    def run(self, cve, segment_group_name):
+    def run(self, cve, segment_group_name, enable_filters):
+        if enable_filters == 'true':
+            enable_filters_bool = True
+
+        elif enable_filters == 'false':
+            enable_filters_bool = False
+
+        else:
+            self.logger.entry('critical', '"enable_filters" must be set to true or false')
+            sys.exit(1)
+
         self.logger.entry('info', f'Received {cve} and profile name {self.profile_name}')
 
         cve_map = self.get_cve_filter_map()
@@ -40,11 +50,12 @@ class Op(Tp):
 
         self.logger.entry('info', f'{cve} maps to filter(s): {joined_filter_nums}')
 
-        self.set_filter_entries(filter_nums)
+        self.set_filter_entries(filter_nums, enable_filters_bool)
         self.get_filter_statuses(filter_nums)
         self.distribute_profile(segment_group_name)
 
-        msg = f'Successfully added {cve} filter(s) to {self.profile_name} profile and distributed changes to ' \
+        filter_setting = 'added' if enable_filters_bool else 'disabled'
+        msg = f'Successfully {filter_setting} {cve} filter(s) to {self.profile_name} profile and distributed changes to ' \
               f'{segment_group_name} segment group'
         self.logger.entry('info', msg)
 
@@ -58,8 +69,9 @@ def lambda_handler(event, context):
     profile_name = event['profile_name']
     segment_group_name = event['segment_group_name']
     cve = event['cve']
+    enable_filters = event.get('enable_filters', 'true').lower()
 
     op = Op(APP_NAME, profile_name, print_logger=True)
-    status = op.run(cve, segment_group_name)
+    status = op.run(cve, segment_group_name, enable_filters)
 
     return status
