@@ -9,8 +9,8 @@ APP_NAME = 'tp'
 
 
 class Op(Tp):
-    def __init__(self, app_name, profile_name, print_logger=False):
-        super().__init__(app_name, profile_name, print_logger=print_logger)
+    def __init__(self, app_name, profile_name, print_logger=False, log_level='INFO'):
+        super().__init__(app_name, profile_name, print_logger=print_logger, log_level=log_level)
 
         self.logger.entry('info', 'Retrieving profile names')
         profile_table = self.get_data_dictionary('PROFILE')
@@ -70,9 +70,9 @@ def lambda_handler(event, context):
     segment_group_name = event['segment_group_name']
     cve = event['cve'].upper()
     enable_filters = event.get('enable_filters', 'true').lower()
+    log_level = event.get('log_level', 'INFO').upper()
 
-    op = Op(APP_NAME, profile_name, print_logger=True)
+    op = Op(APP_NAME, profile_name, print_logger=True, log_level=log_level)
     status = op.run(cve, segment_group_name, enable_filters)
 
     return status
-

@@ -13,10 +13,10 @@ except:
 
 
 class Tp:
-    def __init__(self, app_name, profile_name='', verify_certs=False, console_logger=False,
-                 log_file_path='', print_logger=False, log_level='INFO'):
+    def __init__(self, app_name, profile_name='', verify_certs=False, console_logger=False, print_logger=False,
+                 log_level='INFO', log_file_path=''):
 
-        self.logger = Loggers(app_name, console_logger, log_file_path, print_logger, log_level)
+        self.logger = Loggers(app_name, console_logger, print_logger, log_level, log_file_path)
         self.profile_name = profile_name
         self.verify_certs = verify_certs
 

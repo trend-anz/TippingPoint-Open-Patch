@@ -20,7 +20,8 @@ Provided payload:
     'profile_name': 'Default',
     'segment_group_name': 'Default',
     'cve': 'CVE-1999-0454',
-    'enable_filters': 'true' #optional - defaults to 'true'
+    'enable_filters': 'true', #optional - defaults to 'true'
+    'log_level': 'INFO' # optional - defaults to 'INFO'
 }
 ```
 
