@@ -210,6 +210,7 @@ class Tp:
         url = f'https://{self.sms_address}/ipsProfileMgmt/distributeProfile'
 
         response = requests.get(url, headers=self.headers, verify=self.verify_certs, params=params)
+
         self._check_api_response(response)
 
         return response
@@ -230,3 +231,16 @@ class Tp:
     def _check_api_response(response):
         if response.status_code != 200:
             raise ValueError(f'API called returned status code {response.status_code} - {response.text}')
+
+    def str_to_bool(self, string):
+        if string == 'true':
+            enable_filters_bool = True
+
+        elif string == 'false':
+            enable_filters_bool = False
+
+        else:
+            self.logger.entry('critical', '"enable_filters" must be set to true or false')
+            sys.exit(1)
+
+        return enable_filters_bool

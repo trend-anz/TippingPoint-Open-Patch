@@ -5,7 +5,6 @@ TPOP enables third parties (Tenable, Rapid7, Qualys, ServiceNow, etc) to easily 
 1. Profile name
 2. Segment group name
 3. CVE of a vulnerability
-4. (Optional) Enable or disable filters
 
 TPOP will then do the following:
 
@@ -14,12 +13,16 @@ TPOP will then do the following:
 
 ## Example Output
 
-Provided parameters:
+Provided payload:
 
-* profile_name: Default
-* segment_group_name: Default
-* cve: CVE-1999-0454
-* enable_filters: true (optional: defaults to 'true')
+```
+{
+    'profile_name': 'Default',
+    'segment_group_name': 'Default',
+    'cve': 'CVE-1999-0454',
+    'enable_filters': 'true' #optional - defaults to 'true'
+}
+```
 
 ### Run
 
