@@ -66,6 +66,9 @@ class Op(Tp):
 
 
 def lambda_handler(event, context):
+    print('Received event. Payload will be printed below:')
+    print(json.dumps(event))
+
     profile_name = event['profile_name']
     segment_group_name = event['segment_group_name']
     cve = event['cve'].upper()
